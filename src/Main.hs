@@ -3,6 +3,7 @@ module Main where
 import Control.Monad.Fix (MonadFix)
 import qualified Data.Text as T
 import Reflex.Dom
+import ValueSVG
 
 main :: IO ()
 main =

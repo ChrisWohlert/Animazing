@@ -16,6 +16,10 @@ executable reflex-stone
     , reflex
     , reflex-dom
     , text
+    , aeson
+    , bytestring
+    , diagrams-core
+    , diagrams-lib
 
   default-extensions:
     DataKinds

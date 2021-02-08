@@ -14,7 +14,7 @@ let
     inherit system;
   };
   project = reflexPlatform.project ({pkgs, ...}: {
-    useWarp = true;
+    useWarp = false;
     withHoogle = false;
     packages = {
       reflex-stone = pkgs.lib.cleanSource (gitignoreSource ./.);

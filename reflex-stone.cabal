@@ -15,11 +15,41 @@ executable reflex-stone
       base
     , reflex
     , reflex-dom
+    , reflex-dom-core
     , text
     , aeson
     , bytestring
-    , diagrams-core
-    , diagrams-lib
+    , containers
+    , svg-builder
+    , blaze-markup
+    , transformers
+    , lens
+    , colour
+    , palette
+    , formatting
+    , fmt
+    , linear
+    , data-default-class
+    , distributive
+    , monoid-extras
+    , unordered-containers
+    , intervals
+    , adjunctions
+    , process
+    , filepath
+    , directory
+    , mtl
+    , exceptions
+    , cereal
+    , fingertree
+    , active
+    , dual-tree
+    , array
+    , hashable
+    , base64-bytestring
+    , profunctors
+    , attoparsec
+    , parsec
 
   default-extensions:
     DataKinds

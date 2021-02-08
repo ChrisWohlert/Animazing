@@ -14,12 +14,11 @@ import           Animation
 import           Control.Lens                  hiding (at, element, none, (#))
 import           Control.Monad
 import           Data.Colour.Palette.BrewerSet
-import           Diagrams.Backend.Rasterific
+import           Diagrams.Backend.Reflex
 import           Diagrams.CubicSpline.Boehm
 import           Diagrams.Prelude              hiding (Line, duration,
                                                 lineWidth, p3)
 import           Diagrams.Trail                hiding (Line)
-import           Graphics.SVGFonts
 import           Prelude                       hiding (log)
 import           Signal
 import           SvgAnimation
@@ -129,7 +128,7 @@ cubicBezierS''' (p1, p2) = do
            <> circle 0.01 # lc black # fc black # translateX (b ^. _x)
 
 percentageCircle (Percentage p) =
-    textP 0 p # scale 0.4
+    textP p # scale 0.4
                          # translateY (-0.05)
     <> dial (Percentage p) # fc purple
                            # lc purple
@@ -141,7 +140,7 @@ dial (Percentage p) = annularWedge 1 width (rotateBy (1/4) xDir) (360 @@ deg)
         width = 0.8
 
 percentageHalfCircle p =
-    textP 0 (p ^. percentage) # scale 0.4
+    textP (p ^. percentage) # scale 0.4
                                          # translateY (-0.05)
     <> halfDial p # fc purple
                   # lc purple
@@ -205,7 +204,7 @@ mkBar t width maxValue bar color =
             # translateY (-0.2)
             # scale 0.05
             # rotateBy (-1/8)
-        <> textP 1 (bar ^. barValue * t)
+        <> textP (show $ bar ^. barValue * t)
             # translateY (0.8 + 20 * normalizedValue)
             # scale 0.05
             # fc color
@@ -214,7 +213,7 @@ mkBar t width maxValue bar color =
 
 textF = text
 
-textP d p = textF $ d ++ " " ++ p ++ "%"
+textP p = textF $ (show p) ++ "%"
 
 pieChart pies = pieChart' pies (90 @@ deg) colors
     where
@@ -266,12 +265,7 @@ lineGraph settings lines =
         normalize :: Line -> [Double]
         normalize line = map ((h *) . (/ maxYValue)) $ line ^. lineValues
         yLabels = map (\ v ->
-                textSVG (show v) 1
-                    # stroke
-                    # fc black
-                    # scale 0.06
-                    # lw 0
-                    # fc white
+            text (show v)
             ||| strutX 0.02
             ||| fromOffsets [-0.03 ^& 0] # strokeThinGrayLine)
             (log [maxYValue, maxYValue - (maxYValue / 5) .. 0])
@@ -286,11 +280,7 @@ lineGraph settings lines =
             ===
             strutY 0.02
             ===
-            textSVG a 1
-                # stroke
-                # fc black
-                # scale 0.06
-                # lw 0) $ settings ^. xAxis) # fc white
+            text a) $ settings ^. xAxis) # fc white
         forkAll' (zipWith drawLine lines colors) (withOptions & signal .~ cubicBezierS'' (0.8 ^& 0, 0.2 ^& 1)
                                                               & duration . _Duration .~ 3)
         forkAll' (zipWith drawLineBackground lines colors) (withOptions & signal .~ cubicBezierS'' (0.8 ^& 0, 0.2 ^& 1)

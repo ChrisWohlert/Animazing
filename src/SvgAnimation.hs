@@ -12,16 +12,15 @@ module SvgAnimation (mkGif, drawTrail, drawTrailAt, playTrail, getTrail, getTrai
 
 
 import           Animation
-import qualified Debug.Trace                 as D
-import           Diagrams.Backend.Rasterific
-import           Diagrams.Direction
-import           Diagrams.Path
-import           Diagrams.Prelude            hiding (Time)
+import qualified Data.Text.Lazy          as T
+import           Diagrams.Backend.Reflex
+import           Diagrams.Prelude        hiding (Time)
+import           Graphics.Svg.Core       hiding (with)
+import           Reflex.Dom.Old          (MonadWidget)
 
 
-
-mkGif :: Animator (Diagram B) -> IO ()
-mkGif anim = animatedGif "test.gif" (mkWidth 800) LoopingNever 2 (playAnimation 50 anim)
+mkGif :: forall t m a. (Monoid' a, MonadWidget t m) => Animator (QDiagram ReflexSvg V2 Double a) -> [m (DiaEv t a)]
+mkGif anim = map (reflexDia $ def & sizeSpec .~ mkWidth 400) (playAnimation 50 anim)
 
 
 drawTrail :: Trail V2 Double -> Time -> Diagram B

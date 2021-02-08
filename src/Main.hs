@@ -1,13 +1,16 @@
 module Main where
 
-import Control.Monad.Fix (MonadFix)
-import qualified Data.Text as T
-import Reflex.Dom
-import ValueSVG
+import           Control.Monad.Fix       (MonadFix)
+import qualified Data.Text               as T
+import           Diagrams.Backend.Reflex
+import           Diagrams.Prelude        hiding (Time, el, text)
+import           Reflex
+import           Reflex.Dom
+import           ValueSVG
 
 main :: IO ()
 main =
-  mainWidgetWithHead headWidget bodyWidget
+  mainWidgetWithHead headWidget bodyElement
 
 headWidget :: DomBuilder t m => m ()
 headWidget = do
@@ -15,29 +18,8 @@ headWidget = do
   elAttr "meta" ("name" =: "viewport" <> "content" =: "width=device-width, initial-scale=1") blank
   el "title" $ text "reflex-stone"
 
-bodyWidget ::
-  ( DomBuilder t m,
-    MonadFix m,
-    MonadHold t m,
-    PostBuild t m
-  ) =>
-  m ()
-bodyWidget = do
-  el "h1" $ text "reflex-stone"
-  clicked <- stoneButton
-  cnt <- foldDyn (+) (0 :: Int) $ 1 <$ clicked
-  elClass "p" "result" $ do
-    dyn_ $
-      ffor cnt $ \case
-        0 -> text "Go ahead and hit the stone"
-        n -> do
-          text $ T.pack (show n)
-          text " heads!"
-  divClass "footer" $ do
-    elAttr "a" ("href" =: homePage) $
-      text "View source on GitHub"
-  where
-    homePage = "https://github.com/srid/reflex-stone"
+bodyElement :: MonadWidget t m => m ()
+bodyElement = tsvg
 
 stoneButton :: DomBuilder t m => m (Event t ())
 stoneButton = do
@@ -60,3 +42,13 @@ clickEvent ::
   m (Event t ())
 clickEvent w =
   fmap (fmap (const ()) . domEvent Click . fst) w
+
+tsvg :: MonadWidget t m => m ()
+tsvg = do
+  ev <- last gif
+  ct <- count . ffilter getAny $ diaMousedownEv ev
+  dynText $ fmap counter ct
+  return ()
+
+counter :: Int -> T.Text
+counter i = T.concat ["The circle has been clicked ", T.pack (show i), " times" ]

@@ -1,4 +1,4 @@
-# reflex-stone
+# Animazing
 
 Like [Obelisk](https://github.com/obsidiansystems/obelisk), but for static sites.
 
